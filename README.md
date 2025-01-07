@@ -24,12 +24,12 @@ Dans ce TP vous allez apprendre à manipuler les recyclerviews dans une applicat
 3. Commit et push les derniers changements. 
 
 ## Etape 3 : Améliorer l'application
-1. Utiliser le viewbinding pour référencer les éléments de vues dans l'acitivité et l'adapter
+1. Utiliser le viewbinding pour référencer les éléments de vues dans l'activité et l'adapter
 2. Implémenter une fonctionnalité permattant d'activer ou désactiver un utilisateur en swipant la cellule à gauche ou à droite;
 >> Quand l'utiliateur est inactif (i.e. désactivé) on met un background 'rouge' sur la cellule quand il est activé on met un background blanc.
 3. Adapter les tests unitaires pour prendre en compte les derniers changements (i.e. actif vs inactif)
 4. Gestion de l'ordonnancement des éléments de la liste en autorisant le déplacement des cellules.
-
+>> Drag and drop sur le textview de la cellule pour changer l'ordre des éléments de la liste.
 ## Bonus 
 - Modifier les tests d'inferfaces
 

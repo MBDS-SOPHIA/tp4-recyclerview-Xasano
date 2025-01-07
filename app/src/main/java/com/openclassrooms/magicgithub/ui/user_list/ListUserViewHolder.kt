@@ -1,5 +1,6 @@
 package com.openclassrooms.magicgithub.ui.user_list
 
+import android.view.MotionEvent
 import android.view.View
 import android.widget.ImageButton
 import android.widget.ImageView
@@ -23,6 +24,19 @@ class ListUserViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
             .into(avatar)
         username.text = user.login
         deleteButton.setOnClickListener { callback.onClickDelete(user) }
-    }
 
+        if (user.isActive) {
+            itemView.setBackgroundColor(itemView.context.getColor(R.color.white))
+        } else {
+            itemView.setBackgroundColor(itemView.context.getColor(R.color.red))
+        }
+
+        // Set TouchListener on the username TextView to start drag and drop
+        username.setOnTouchListener { _, event ->
+            if (event.action == MotionEvent.ACTION_DOWN) {
+                callback.onStartDrag(this)
+            }
+            false
+        }
+    }
 }

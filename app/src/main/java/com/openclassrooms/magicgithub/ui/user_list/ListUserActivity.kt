@@ -5,25 +5,27 @@ import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.RecyclerView
-import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.openclassrooms.magicgithub.R
+import androidx.recyclerview.widget.ItemTouchHelper
 import com.openclassrooms.magicgithub.di.Injection.getRepository
 import com.openclassrooms.magicgithub.model.User
+import com.openclassrooms.magicgithub.databinding.ActivityListUserBinding
 
 class ListUserActivity : AppCompatActivity(), UserListAdapter.Listener {
     // FOR DESIGN ---
-    lateinit var recyclerView: RecyclerView
-    lateinit var fab: FloatingActionButton
+    lateinit var binding: ActivityListUserBinding
 
     // FOR DATA ---
     private lateinit var adapter: UserListAdapter
+    private lateinit var itemTouchHelper: ItemTouchHelper
 
     // OVERRIDE ---
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_list_user)
+        binding = ActivityListUserBinding.inflate(layoutInflater)
         configureFab()
         configureRecyclerView()
+        configureItemTouchHelper()
+        setContentView(binding.root)
     }
 
     override fun onResume() {
@@ -33,17 +35,39 @@ class ListUserActivity : AppCompatActivity(), UserListAdapter.Listener {
 
     // CONFIGURATION ---
     private fun configureRecyclerView() {
-        recyclerView = findViewById(R.id.activity_list_user_rv)
         adapter = UserListAdapter(this)
-        recyclerView.adapter = adapter
+        binding.activityListUserRv.adapter = adapter
     }
 
     private fun configureFab() {
-        fab = findViewById(R.id.activity_list_user_fab)
-        fab.setOnClickListener(View.OnClickListener { view: View? ->
+        binding.activityListUserFab.setOnClickListener(View.OnClickListener { view: View? ->
             getRepository().addRandomUser()
             loadData()
         })
+    }
+
+    private fun configureItemTouchHelper() {
+        val itemTouchHelperCallback = object : ItemTouchHelper.SimpleCallback(
+            ItemTouchHelper.UP or ItemTouchHelper.DOWN,
+            0
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean {
+                val fromPosition = viewHolder.adapterPosition
+                val toPosition = target.adapterPosition
+                adapter.moveItem(fromPosition, toPosition)
+                return true
+            }
+
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                // No action for horizontal swipes
+            }
+        }
+        itemTouchHelper = ItemTouchHelper(itemTouchHelperCallback)
+        itemTouchHelper.attachToRecyclerView(binding.activityListUserRv)
     }
 
     private fun loadData() {
@@ -55,5 +79,9 @@ class ListUserActivity : AppCompatActivity(), UserListAdapter.Listener {
         Log.d(ListUserActivity::class.java.name, "User tries to delete a item.")
         getRepository().deleteUser(user)
         loadData()
+    }
+
+    override fun onStartDrag(viewHolder: RecyclerView.ViewHolder) {
+        itemTouchHelper.startDrag(viewHolder)
     }
 }
